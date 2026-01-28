@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>메모 상세 보기</title>
+    <style>
+        body { background-color: #f7f9fc; font-family: sans-serif; display: flex; justify-content: center; padding-top: 50px; }
+        .detail-card { background: white; width: 500px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); overflow: hidden; }
+        .header { background: #007bff; color: white; padding: 20px; font-size: 1.2rem; font-weight: bold; }
+        .content { padding: 30px; line-height: 1.6; color: #333; min-height: 150px; }
+        .footer { padding: 20px; border-top: 1px solid #eee; text-align: right; }
+        .btn { padding: 10px 20px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 14px; }
+        .btn-back { background: #6c757d; color: white; }
+    </style>
+</head>
+<body>
+    <div class="detail-card">
+        <div class="header">📝 메모 상세 내용</div>
+        <div class="content">
+            {{ memo.content|linebreaks }}
+            <br>
+            <small style="color: #999;">작성일: {{ memo.created_at|date:"Y-m-d H:i" }}</small>
+        </div>
+        <div class="footer">
+            <a href="{% url 'memo_list' %}" class="btn btn-back">목록으로 돌아가기</a>
+        </div>
+    </div>
+</body>
+</html>
