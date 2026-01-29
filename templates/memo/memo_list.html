@@ -10,6 +10,21 @@
 
     <h1 style="margin:0 0 18px;">MoodMemo</h1>
 
+    <!-- 상단 유저/로그아웃 -->
+    <div style="display:flex; justify-content:space-between; align-items:center; margin:0 0 14px;">
+      <div style="color:#666; font-size:13px;">
+        {{ request.user.username }} 님
+      </div>
+
+      <form method="post" action="{% url 'logout' %}" style="margin:0;">
+        {% csrf_token %}
+        <button type="submit"
+          style="padding:8px 12px;border-radius:12px;border:1px solid #ddd;background:#fff;cursor:pointer;">
+          로그아웃
+        </button>
+      </form>
+    </div>
+
     <!-- 검색 -->
     <form method="get" action="/memo/" style="display:flex;gap:10px;align-items:center;">
       <input name="q" value="{{ q }}" placeholder="메모 검색...(내용)"
