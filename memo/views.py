@@ -10,14 +10,6 @@ from .models import Memo, Category
 
 @login_required
 def memo_list(request):
-    q = (request.GET.get("q") or "").strip()
-    category_id = request.GET.get("category")
-    sort = request.GET.get("sort") or "latest"
-
-    memos = Memo.objects.filter(author=request.user).select_related("category")
-
-    if category_id:
-        memos = memos.filter(category_id=category_id)
 
     if q:
         memos = memos.filter(content__icontains=q)
@@ -41,7 +33,7 @@ def memo_list(request):
 
 @login_required
 def memo_detail(request, memo_id):
-    memo = get_object_or_404(Memo, id=memo_id, author=request.user)
+    memo = get_object_or_404(Memo, id=memo_id, user=request.user)
     return render(request, 'memo/memo_detail.html', {'memo': memo})
 
 
@@ -50,25 +42,22 @@ def memo_detail(request, memo_id):
 @login_required
 def memo_create(request):
     if request.method == 'POST':
+        # 1. 폼 데이터 가져오기
         form = MemoForm(request.POST)
+        
+        # 2. 폼 검증 (여기서 False가 나면 저장이 안 됨)
         if form.is_valid():
             memo = form.save(commit=False)
-            memo.author = request.user
+            
+            # [수정 포인트] author가 아니라 user 필드에 저장해야 함!
+            memo.user = request.user 
+            
             memo.save()
             messages.success(request, '메모가 저장되었습니다!')
-            return redirect('memo:list')
-        messages.error(request, '입력 내용을 확인해 주세요.')
-    else:
-        form = MemoForm()
-
-    # ✅ 무조건 여기(함수 끝, render 직전)
-    categories = Category.objects.all().order_by('id')
-    return render(request, 'memo/memo_form.html', {'form': form, 'categories': categories})
-
 
 @login_required
 def memo_update(request, memo_id):
-    memo = get_object_or_404(Memo, id=memo_id, author=request.user)
+    memo = get_object_or_404(Memo, id=memo_id, user=request.user)
 
     if request.method == 'POST':
         form = MemoForm(request.POST, instance=memo)
@@ -89,7 +78,7 @@ def memo_update(request, memo_id):
 @require_POST
 @login_required
 def memo_delete(request, memo_id):
-    memo = get_object_or_404(Memo, id=memo_id, author=request.user)
+    memo = get_object_or_404(Memo, id=memo_id, user=request.user)
     memo.delete()
     messages.success(request, '메모가 삭제되었습니다.')
     return redirect('memo:list')
